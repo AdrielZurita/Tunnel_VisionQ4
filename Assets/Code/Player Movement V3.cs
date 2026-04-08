@@ -9,20 +9,22 @@ public class PlayerMovementV3 : MonoBehaviour
     public float groundDrag;
     public float jumpForce;
     public float jumpCoolDown;
-    public float airMult;
+    private float tempSpeed;
 
     [Header("Yumpin")]
-    bool CanJump = true;
+    bool readyToJump = true;
     public float jumpGravity;
     public float sprintSpeedMultiplier = 1.2f;
-    private float tempSpeed;
+    public float airControl = 0.8f;
+    public float jumpFloat = 0.2f;
+    float tempGravity;
 
     [Header("Ground-Checkinin")]
     public float playerHeight;
     public LayerMask whatIsGround;
     public float heightCheckOffset = 0.2f;
     bool grounded;
-    public float CoyoteTime = 0.15;
+    public float CoyoteTime = 0.15f;
     bool isRunningCoroutine;
 
     [Header("Orientationifyinin")]
@@ -32,19 +34,25 @@ public class PlayerMovementV3 : MonoBehaviour
     Vector3 moveDirection; 
     Rigidbody rb;
 
+    [Header("DevMode")]
+    public bool DevMode;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
-        grounded = false;
+        grounded = true;
         isRunningCoroutine = false;
+        readyToJump = true;
     }
 
     void Update()
     {
+        //tracks WASD Space and LShift
         MyInput();
 
+        //tracks 
         SpeedControl();
 
         if (grounded)
@@ -67,29 +75,51 @@ public class PlayerMovementV3 : MonoBehaviour
         if (Physics.Raycast(transform.localPosition, -transform.up, playerHeight * 0.5f + heightCheckOffset, whatIsGround))
         {
             grounded = true;
+            tempGravity = 0;
         }
         else if (!isRunningCoroutine)
         {
-            StartCoroutine(CoyoteJump);
+            StartCoroutine(CoyoteJump());
             isRunningCoroutine = true;
         }
     }
 
     private void MyInput()
     {
+        if(DevMode && Input.GetKey(KeyCode.F1))
+        {
+            print(grounded);
+        }
+        
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if(Input.GetKey(KeyCode.Space) && readyToJump && grounded /*&& objectPlsHelp.canMove*/)
+        if(Input.GetKey(KeyCode.Space))
         {
-            Jump();
-            readyToJump = false;
-            Invoke(nameof(ResetJump), jumpCoolDown);
+            Debug.Log("pressing Space");
+            if(readyToJump && grounded)
+            {
+                tempGravity = jumpGravity * (1 - jumpFloat);
+                Jump(); 
+                readyToJump = false;
+                //Invoke(nameof(ResetJump), jumpCoolDown);
+                print("yumped");
+            }
+            
+            if (!grounded)
+            {
+                tempGravity = jumpGravity * (1 - jumpFloat);
+            }
+        }
+        else
+        {
+            tempGravity = jumpGravity;
         }
 
         if(Input.GetKey(KeyCode.LeftShift))
         {
             tempSpeed = moveSpeed * sprintSpeedMultiplier;
+            
         }
         else
         {
@@ -101,14 +131,14 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         moveDirection = verticalInput * orientation.forward + horizontalInput * orientation.right;
         
-        if(grounded /*&& objectPlsHelp.canMove*/)
+        if(grounded)
         {
             rb.AddForce(moveDirection.normalized * tempSpeed * 10f, ForceMode.Force);
         }
-        else if (!grounded /*&& objectPlsHelp.canMove*/)
+        else if (!grounded)
         {
-            rb.AddForce(transform.up * jumpGravity, ForceMode.Impulse);
-            rb.AddForce(moveDirection.normalized * tempSpeed * 10f * airMult, ForceMode.Force);
+            rb.AddForce(transform.up * tempGravity, ForceMode.Impulse);
+            rb.AddForce(moveDirection.normalized * tempSpeed * 10f * airControl, ForceMode.Force);
         }
     }
 
@@ -130,10 +160,10 @@ public class PlayerMovementV3 : MonoBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
-    private void ResetJump()
+    /*private void ResetJump()
     {
         readyToJump = true;
-    }
+    }*/
 
     /*void OnCollisionStay(Collision other)
     {
@@ -161,5 +191,6 @@ public class PlayerMovementV3 : MonoBehaviour
         yield return new WaitForSeconds(CoyoteTime);
         grounded = false;
         isRunningCoroutine = false;
+        readyToJump = true;
     }
 }
