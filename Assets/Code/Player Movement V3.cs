@@ -5,11 +5,12 @@ using UnityEngine;
 public class PlayerMovementV3 : MonoBehaviour
 {
     [Header("Shmovin")]
-    public float moveSpeed;
-    public float groundDrag;
-    public float jumpForce;
-    public float jumpCoolDown;
+    public float moveSpeed = 20f;
+    public float groundDrag = 3.5f;
+    public float jumpForce = 10f;
+    public float jumpCoolDown = 0.5f;
     private float tempSpeed;
+    public float speedCap = 1;
 
     [Header("Yumpin")]
     bool readyToJump = true;
@@ -17,7 +18,8 @@ public class PlayerMovementV3 : MonoBehaviour
     public float sprintSpeedMultiplier = 1.2f;
     public float airControl = 0.8f;
     public float jumpFloat = 0.2f;
-    float tempGravity;
+    //float tempGravity;
+    bool flutterJump;
 
     [Header("Ground-Checkinin")]
     public float playerHeight;
@@ -75,7 +77,7 @@ public class PlayerMovementV3 : MonoBehaviour
         if (Physics.Raycast(transform.localPosition, -transform.up, playerHeight * 0.5f + heightCheckOffset, whatIsGround))
         {
             grounded = true;
-            tempGravity = 0;
+            //tempGravity = 0.1f;
         }
         else if (!isRunningCoroutine)
         {
@@ -99,22 +101,21 @@ public class PlayerMovementV3 : MonoBehaviour
             Debug.Log("pressing Space");
             if(readyToJump && grounded)
             {
-                tempGravity = jumpGravity * (1 - jumpFloat);
+                //tempGravity = jumpGravity * (1 - jumpFloat);
+                flutterJump = false;
                 Jump(); 
                 readyToJump = false;
                 //Invoke(nameof(ResetJump), jumpCoolDown);
                 print("yumped");
-            }
+            }  
             
-            if (!grounded)
-            {
-                tempGravity = jumpGravity * (1 - jumpFloat);
-            }
+            flutterJump = true;
         }
         else
         {
-            tempGravity = jumpGravity;
+            flutterJump = false;
         }
+
 
         if(Input.GetKey(KeyCode.LeftShift))
         {
@@ -137,9 +138,15 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         else if (!grounded)
         {
-            rb.AddForce(transform.up * tempGravity, ForceMode.Impulse);
             rb.AddForce(moveDirection.normalized * tempSpeed * 10f * airControl, ForceMode.Force);
         }
+
+        if (flutterJump)
+        {
+            rb.AddForce(transform.up * jumpFloat, ForceMode.Impulse);
+        }
+
+        rb.AddForce(transform.up * jumpGravity, ForceMode.Impulse);
     }
 
     private void SpeedControl()
@@ -148,7 +155,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if(flatVel.magnitude > tempSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * tempSpeed;
+            Vector3 limitedVel = flatVel.normalized * tempSpeed * speedCap;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
     }
