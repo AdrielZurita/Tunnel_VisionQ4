@@ -434,8 +434,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f7d0ccf29dca8940a53f542099ffc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedText: {fileID: 0}
-  PlayerMovementV3: {fileID: 0}
+  speedText: {fileID: 425414891}
+  PlayerMovementV3: {fileID: 637679395}
 --- !u!114 &425414891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3558,15 +3558,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1196021f2dc0a974a98bb7a35b3d45e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 40
+  moveSpeed: 20
   groundDrag: 3.5
   jumpForce: 40
   jumpCoolDown: 0.5
   tempSpeed: 0
   speedCap: 2
-  accelerationSpeed: 0.1
+  walkAccelerationSpeed: 0.4
+  sprintAccelerationSpeed: 0.2
   jumpGravity: -1
-  sprintSpeedMultiplier: 1.1
+  sprintSpeedMultiplier: 1.5
   airControl: 0.8
   jumpFloat: 0.6
   AirDrag: 0.1

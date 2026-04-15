@@ -10,7 +10,8 @@ public class PlayerMovementV3 : MonoBehaviour
     public float jumpCoolDown = 0.5f;         // Optional cooldown between jumps.
     public float tempSpeed;                  // Runtime speed, changes when sprinting.
     public float speedCap = 1;                // Max percentage of speed allowed.
-    public float accelerationSpeed = 1f;      // How quickly the player reaches max speed.
+    public float walkAccelerationSpeed = 0.4f;      // How quickly the player reaches max speed while walking.
+    public float sprintAccelerationSpeed = 0.2f;      // How quickly the player reaches max speed while sprinting.
     float tempAcceleration = 1f;
 
     [Header("Yumpin")]
@@ -62,11 +63,11 @@ public class PlayerMovementV3 : MonoBehaviour
         // Apply different drag depending on grounded state.
         if (grounded)
         {
-            rb.drag = groundDrag;
+            rb.drag = groundDrag; // Apply ground drag to slow down when on the ground.
         }
         else
         {
-            rb.drag = AirDrag;
+            rb.drag = AirDrag; // Apply air drag to slow down when in the air.
         }
     }
 
@@ -97,10 +98,72 @@ public class PlayerMovementV3 : MonoBehaviour
         if (DevMode && Input.GetKey(KeyCode.F1))
         {
             print(grounded);                   // Debug: print grounded state.
+            print(rb.velocity);                // Debug: print current velocity.
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
+        if (horizontalInput != 0 || verticalInput != 0) // if pressing WASD
+        {    
+            if (tempSpeed < 0.1f)
+            {
+                tempSpeed = 2f; // 
+            }
+            if (tempSpeed < moveSpeed * tempAcceleration)
+            {       
+                tempSpeed += ( moveSpeed * walkAccelerationSpeed + 2f ) * Time.deltaTime; // Gradually increase speed when moving.
+            }
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                if (tempAcceleration < 1f)
+                {
+                    tempAcceleration = 1f; // Reset acceleration to 1 when below.
+                }
+
+                //tempSpeed = moveSpeed * tempAcceleration; 
+            
+                tempAcceleration += sprintAccelerationSpeed * sprintSpeedMultiplier * Time.deltaTime; // Gradually increase speed while sprinting.
+
+                if (tempSpeed > moveSpeed * speedCap)
+                {
+                    tempSpeed = moveSpeed * speedCap; // Cap sprint speed.
+
+                    tempAcceleration = speedCap/sprintSpeedMultiplier; // Cap acceleration to match speed cap.
+                }
+            }
+            else
+            {
+                //tempSpeed = moveSpeed * tempAcceleration;
+                if (tempAcceleration >= 1f)
+                {
+                    tempAcceleration -= 0.5f * tempAcceleration * Time.deltaTime; // Decrease acceleration when not sprinting.
+                }
+                else if (tempAcceleration < 1f)
+                {
+                    tempAcceleration = 1f; // Reset acceleration to 1 when below.
+                }
+
+                if (tempSpeed > moveSpeed * tempAcceleration)
+                {
+                    tempSpeed = moveSpeed * tempAcceleration; // Cap walk speed.
+                }
+            }
+        }
+        else // if not pressing WASD
+        {
+
+            if (tempSpeed >= 0f)
+            {
+                tempSpeed -= ( 0.9f * tempSpeed + 2f ) * Time.deltaTime; // Decrease acceleration when not sprinting.
+            }
+            else if (tempSpeed < 0f)
+            {
+                tempSpeed = 0f; // Reset acceleration to 1 when below.
+            }
+            Debug.Log(tempSpeed);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -115,17 +178,7 @@ public class PlayerMovementV3 : MonoBehaviour
         // Hold space after jumping to apply a small float boost.
         flutterJump = Input.GetKey(KeyCode.Space);
 
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            tempSpeed = moveSpeed * sprintSpeedMultiplier * tempAcceleration; 
-            
-            tempAcceleration += accelerationSpeed * Time.deltaTime; // Gradually increase speed while sprinting.
-        }
-        else
-        {
-            tempSpeed = moveSpeed;
-            tempAcceleration = 1f; // Reset acceleration when not sprinting.
-        }
+        
     }
 
     private void MovePlayer()
@@ -135,11 +188,11 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (grounded)
         {
-            rb.AddForce(moveDirection.normalized * tempSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection * tempSpeed * 10f, ForceMode.Force);
         }
         else
         {
-            rb.AddForce(moveDirection.normalized * tempSpeed * 10f * airControl, ForceMode.Force);
+            rb.AddForce(moveDirection * tempSpeed * 10f * airControl, ForceMode.Force);
         }
 
         if (flutterJump) 
@@ -161,10 +214,7 @@ public class PlayerMovementV3 : MonoBehaviour
             Vector3 limitedVel = flatVel.normalized * tempSpeed * speedCap;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
-        if (tempSpeed > moveSpeed * sprintSpeedMultiplier * speedCap)
-        {
-            tempSpeed = moveSpeed * sprintSpeedMultiplier * speedCap; // Cap sprint speed.
-        }
+        
     }
 
     private void Jump()
