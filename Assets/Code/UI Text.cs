@@ -17,6 +17,6 @@ public class UIText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speedText.text = (Mathf.Round(PlayerMovementV3.tempSpeed * 1.5f).ToString()) + " MPH";
+        speedText.text = (Mathf.Round(PlayerMovementV3.currentSpeed * 1.5f).ToString()) + " MPH";
     }
 }

@@ -4,19 +4,19 @@ using UnityEngine;
 public class PlayerMovementV3 : MonoBehaviour
 {
     [Header("Shmovin")]
-    public float moveSpeed = 20f;             // Base movement speed on the ground.
+    public float maxWalkSpeed = 20f;             // Base movement speed on the ground.
     public float groundDrag = 3.5f;           // Drag applied when grounded.
-    public float jumpForce = 10f;             // Impulse force for a normal jump.
+    public float jumpForce = 40f;             // Impulse force for a normal jump.
     public float jumpCoolDown = 0.5f;         // Optional cooldown between jumps.
-    public float tempSpeed;                  // Runtime speed, changes when sprinting.
-    public float speedCap = 1;                // Max percentage of speed allowed.
-    public float walkAccelerationSpeed = 0.4f;      // How quickly the player reaches max speed while walking.
-    public float sprintAccelerationSpeed = 0.2f;      // How quickly the player reaches max speed while sprinting.
-    float tempAcceleration = 1f;
+    public float currentSpeed;                  // Runtime speed, changes when sprinting.
+    public float speedCap = 2f;                // Max percentage of speed allowed.
+    public float walkAccelerationRate = 0.6f;      // How quickly the player reaches max speed while walking.
+    public float sprintAccelerationRate = 0.3f;      // How quickly the player reaches max speed while sprinting.
+    float currentSprintAcceleration = 1f;
 
     [Header("Yumpin")]
-    bool readyToJump = true;                  // Tracks whether jump input is allowed.
     public float jumpGravity;                 // Downwards force applied while in air.
+    bool readyToJump = true;                  // Tracks whether jump input is allowed.
     public float sprintSpeedMultiplier = 1.2f;// Sprint speed multiplier.
     public float airControl = 0.8f;            // Movement control while airborne.
     public float jumpFloat = 0.2f;             // Small upward force while holding jump.
@@ -106,63 +106,66 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (horizontalInput != 0 || verticalInput != 0) // if pressing WASD
         {    
-            if (tempSpeed < 0.1f)
+            if (currentSpeed < 4f)
             {
-                tempSpeed = 2f; // 
-            }
-            if (tempSpeed < moveSpeed * tempAcceleration)
-            {       
-                tempSpeed += ( moveSpeed * walkAccelerationSpeed + 2f ) * Time.deltaTime; // Gradually increase speed when moving.
+                currentSpeed = 4f; // eases acceleration from 0 to prevent slow start when beginning to move.
             }
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                if (tempAcceleration < 1f)
+                if (currentSprintAcceleration < 1f)
                 {
-                    tempAcceleration = 1f; // Reset acceleration to 1 when below.
+                    currentSprintAcceleration = 1f; // Reset acceleration to 1 when below.
                 }
-
-                //tempSpeed = moveSpeed * tempAcceleration; 
+                
+                if (currentSpeed < maxWalkSpeed * currentSprintAcceleration)
+                {       
+                    currentSpeed += maxWalkSpeed * currentSprintAcceleration * Time.deltaTime; // increases speed by the accelerated value.
+                }
             
-                tempAcceleration += sprintAccelerationSpeed * sprintSpeedMultiplier * Time.deltaTime; // Gradually increase speed while sprinting.
+                currentSprintAcceleration += sprintAccelerationRate * sprintSpeedMultiplier * Time.deltaTime; // accelerates player while sprinmting.
 
-                if (tempSpeed > moveSpeed * speedCap)
+                if (currentSpeed > maxWalkSpeed * speedCap)
                 {
-                    tempSpeed = moveSpeed * speedCap; // Cap sprint speed.
+                    currentSpeed = maxWalkSpeed * speedCap; // Cap sprint speed.
 
-                    tempAcceleration = speedCap/sprintSpeedMultiplier; // Cap acceleration to match speed cap.
+                    currentSprintAcceleration = speedCap/maxWalkSpeed; // Cap acceleration to match speed cap.
                 }
             }
             else
             {
-                //tempSpeed = moveSpeed * tempAcceleration;
-                if (tempAcceleration >= 1f)
-                {
-                    tempAcceleration -= 0.5f * tempAcceleration * Time.deltaTime; // Decrease acceleration when not sprinting.
-                }
-                else if (tempAcceleration < 1f)
-                {
-                    tempAcceleration = 1f; // Reset acceleration to 1 when below.
+                if (currentSpeed < maxWalkSpeed)
+                {       
+                    currentSpeed += maxWalkSpeed * walkAccelerationRate * Time.deltaTime; // Gradually increase speed when walking.
                 }
 
-                if (tempSpeed > moveSpeed * tempAcceleration)
+                if (currentSprintAcceleration >= 1f)
                 {
-                    tempSpeed = moveSpeed * tempAcceleration; // Cap walk speed.
+                    currentSprintAcceleration -= 0.5f * currentSprintAcceleration * Time.deltaTime; // Slows down player (Reference 1)
+                }
+                else if (currentSprintAcceleration < 1f)
+                {
+                    currentSprintAcceleration = 1f; // Prevents slowing to below 1 and slowing base walk speed
+                }
+
+                if (currentSpeed > maxWalkSpeed * currentSprintAcceleration)
+                {
+                    currentSpeed = maxWalkSpeed * currentSprintAcceleration; // Applies slowdown to player from Ref. 1
                 }
             }
         }
         else // if not pressing WASD
         {
 
-            if (tempSpeed >= 0f)
+            if (currentSpeed >= 0f)
             {
-                tempSpeed -= ( 0.9f * tempSpeed + 2f ) * Time.deltaTime; // Decrease acceleration when not sprinting.
+                currentSpeed -= ( 0.9f * currentSpeed + 2f ) * Time.deltaTime; // slows player when not moving
             }
-            else if (tempSpeed < 0f)
+            else if (currentSpeed < 0.1f)
             {
-                tempSpeed = 0f; // Reset acceleration to 1 when below.
+                currentSpeed = 0f; // Prevents speed from being negative
             }
-            Debug.Log(tempSpeed);
+            //Debug.Log(currentSpeed);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -188,11 +191,11 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (grounded)
         {
-            rb.AddForce(moveDirection * tempSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection * currentSpeed * 10f, ForceMode.Force);
         }
         else
         {
-            rb.AddForce(moveDirection * tempSpeed * 10f * airControl, ForceMode.Force);
+            rb.AddForce(moveDirection * currentSpeed * 10f * airControl, ForceMode.Force);
         }
 
         if (flutterJump) 
@@ -209,9 +212,9 @@ public class PlayerMovementV3 : MonoBehaviour
         // Only limit horizontal velocity, preserve current vertical velocity.
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (flatVel.magnitude > tempSpeed)
+        if (flatVel.magnitude > currentSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * tempSpeed * speedCap;
+            Vector3 limitedVel = flatVel.normalized * currentSpeed * speedCap;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
         
