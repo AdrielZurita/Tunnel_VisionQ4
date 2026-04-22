@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerMovementV3 : MonoBehaviour
+public class PlayerMovementTunnelVision : MonoBehaviour
 {
     [Header("Shmovin")]
     public float maxWalkSpeed = 20f;             // Base movement speed on the ground.
@@ -36,7 +36,13 @@ public class PlayerMovementV3 : MonoBehaviour
     private float horizontalInput;                    // Raw input from A/D or left/right keys.
     private float verticalInput;                      // Raw input from W/S or up/down keys.
     private Vector3 moveDirection;                    // Combined movement direction.
-    private Rigidbody rb;                             // Player physics body.
+    public Rigidbody rb;                             // Player physics body.
+
+    [Header("Tunnel Vision Specific Mechanics")]
+    public float zoomMaxMultiplier = 2;          // speed multiplier when fully zoomed in.
+    public float zoomMinMultiplier = 0.5f;    // speed multiplier when fully zoomed out.
+    public float zoomSensitivity = 0.05f;              // how quickly the speed changes when zooming.
+    public float currentZoom = 1f;                    // current zoom level
 
     [Header("DevMode")]
     public bool DevMode = false;                       // Toggle debugging shortcuts.
@@ -99,14 +105,19 @@ public class PlayerMovementV3 : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.F1))
             {
-                print(grounded);                   // Debug: print grounded state.
-                print(rb.velocity);                // Debug: print current velocity
+                print("grounded: " + grounded);                   // Debug: print grounded state.
+                print("velocity: " + rb.velocity);                // Debug: print current velocity
+                print("currentSpeed: " + currentSpeed);              // Debug: print current speed variable.
+                print("currentZoom: " + currentZoom);             // Debug: print current zoom level.
             }
             if (Input.GetKey(KeyCode.F2))
             {
                 rb.velocity =  new Vector3(rb.velocity.x, 40f, rb.velocity.z);           // Debug: Fly
             }
         }
+
+        currentZoom += Input.mouseScrollDelta.y * zoomSensitivity;
+        currentZoom = Mathf.Clamp(currentZoom, zoomMinMultiplier, zoomMaxMultiplier);
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -125,39 +136,39 @@ public class PlayerMovementV3 : MonoBehaviour
                     currentSprintAcceleration = 1f; // Reset acceleration to 1 when below.
                 }
                 
-                if (currentSpeed < maxWalkSpeed * currentSprintAcceleration)
+                if (currentSpeed < maxWalkSpeed * currentSprintAcceleration * currentZoom)
                 {       
-                    currentSpeed += maxWalkSpeed * currentSprintAcceleration * Time.deltaTime; // increases speed by the accelerated value.
+                    currentSpeed += maxWalkSpeed * currentSprintAcceleration * currentZoom * Time.deltaTime; // increases speed by the accelerated value.
                 }
             
                 currentSprintAcceleration += sprintAccelerationRate * sprintSpeedMultiplier * Time.deltaTime; // accelerates player while sprinmting.
 
-                if (currentSpeed > maxWalkSpeed * speedCap)
+                if (currentSpeed > maxWalkSpeed * speedCap * currentZoom)
                 {
-                    currentSpeed = maxWalkSpeed * speedCap; // Cap sprint speed.
+                    currentSpeed = maxWalkSpeed * speedCap * currentZoom; // Cap sprint speed.
 
                     currentSprintAcceleration = speedCap/maxWalkSpeed; // Cap acceleration to match speed cap.
                 }
             }
             else
             {
-                if (currentSpeed < maxWalkSpeed)
+                if (currentSpeed < maxWalkSpeed * currentZoom)
                 {       
-                    currentSpeed += maxWalkSpeed * walkAccelerationRate * Time.deltaTime; // Gradually increase speed when walking.
+                    currentSpeed += maxWalkSpeed * currentZoom * walkAccelerationRate * Time.deltaTime; // Gradually increase speed when walking.
                 }
 
                 if (currentSprintAcceleration >= 1f)
                 {
-                    currentSprintAcceleration -= 0.5f * currentSprintAcceleration * Time.deltaTime; // Slows down player (Reference 1)
+                    currentSprintAcceleration -= 0.8f * currentSprintAcceleration * Time.deltaTime; // Slows down player (Reference 1)
                 }
                 else if (currentSprintAcceleration < 1f)
                 {
                     currentSprintAcceleration = 1f; // Prevents slowing to below 1 and slowing base walk speed
                 }
 
-                if (currentSpeed > maxWalkSpeed * currentSprintAcceleration)
+                if (currentSpeed > maxWalkSpeed * currentSprintAcceleration * currentZoom)
                 {
-                    currentSpeed = maxWalkSpeed * currentSprintAcceleration; // Applies slowdown to player from Ref. 1
+                    currentSpeed = maxWalkSpeed * currentSprintAcceleration * currentZoom; // Applies slowdown to player from Ref. 1
                 }
             }
         }
@@ -166,7 +177,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             if (currentSpeed > 0f)
             {
-                currentSpeed -= ( 0.9f * currentSpeed + 2f ) * Time.deltaTime; // slows player when not moving
+                currentSpeed -= ( 1.5f * currentSpeed + 2f ) * Time.deltaTime; // slows player when not moving
             }
             else if (currentSpeed < 0.1f)
             {
@@ -187,30 +198,36 @@ public class PlayerMovementV3 : MonoBehaviour
 
         // Hold space after jumping to apply a small float boost.
         flutterJump = Input.GetKey(KeyCode.Space);
-
-        
     }
 
     private void MovePlayer()
     {
-        // Convert input into movement direction relative to orientation.
-        moveDirection = verticalInput * orientation.forward + horizontalInput * orientation.right;
+        if (horizontalInput != 0 || verticalInput != 0) // if pressing WASD
+        {  
+            // Convert input into movement direction relative to orientation.
+            moveDirection = verticalInput * orientation.forward + horizontalInput * orientation.right;
+        }
 
         if (grounded)
         {
-            rb.AddForce(moveDirection * currentSpeed * 10f, ForceMode.Force);
+            // rb.AddForce(moveDirection * currentSpeed * 10f, ForceMode.Force);
+            // rb.velocity = moveDirection * currentSpeed * 10f + new Vector3(0f, rb.velocity.y, 0f); // Preserve vertical velocity when grounded.
+            rb.velocity += moveDirection * currentSpeed * 10f;
         }
         else
         {
-            rb.AddForce(moveDirection * currentSpeed * 10f * airControl, ForceMode.Force);
+            // rb.AddForce(moveDirection * currentSpeed * 10f * airControl, ForceMode.Force);
+            // rb.velocity = moveDirection * currentSpeed * 10f * airControl + new Vector3(0f, rb.velocity.y, 0f); // Preserve vertical velocity when in the air.
+            rb.velocity += moveDirection * currentSpeed * 10f * airControl;
         }
 
         if (flutterJump) 
         {
-            rb.AddForce(transform.up * jumpFloat, ForceMode.Impulse);
+            // rb.AddForce(transform.up * jumpFloat, ForceMode.Impulse);
+            rb.velocity += new Vector3(0f, jumpFloat, 0f); // Apply consistent float boost while holding jump.
         }
 
-        rb.AddForce(transform.up * jumpGravity, ForceMode.Impulse);
+        rb.velocity += new Vector3(0f, jumpGravity, 0f);
         
     }
 
@@ -221,7 +238,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (flatVel.magnitude > currentSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * currentSpeed * speedCap;
+            Vector3 limitedVel = flatVel.normalized * currentSpeed * speedCap ;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
         
@@ -238,6 +255,6 @@ public class PlayerMovementV3 : MonoBehaviour
         yield return new WaitForSeconds(CoyoteTime);
         grounded = false;
         isRunningCoroutine = false;
-        readyToJump = true;                   // Allow jump again after coyote time.
+        readyToJump = false;                   // Allow jump again after coyote time.
     }
 }

@@ -5,8 +5,13 @@ using TMPro;
 
 public class UIText : MonoBehaviour
 {
+    // coins
+    public CoinTrackerScript playerCoinData;
+    public TextMeshProUGUI coinCountText;
+
+    // speed
+    public PlayerMovementTunnelVision PlayerMovementTunnelVision;
     public TextMeshProUGUI speedText;
-    public PlayerMovementV3 PlayerMovementV3;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +22,7 @@ public class UIText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speedText.text = (Mathf.Round(PlayerMovementV3.currentSpeed * 1.5f).ToString()) + " MPH";
+        coinCountText.text = playerCoinData.playerCountCount.ToString() + " coins";
+        speedText.text = Mathf.Round(PlayerMovementTunnelVision.rb.velocity.magnitude * 3.5f).ToString() + " MPH";
     }
 }
