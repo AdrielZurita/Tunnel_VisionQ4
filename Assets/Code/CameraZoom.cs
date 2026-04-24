@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
 {
+    public float zoomosity = 20f;
     public PlayerMovementTunnelVision PlayerMovementTunnelVision;
 
     // Update is called once per frame
     void Update()
     { 
-        Camera.main.fieldOfView = PlayerMovementTunnelVision.currentZoom * 20f + 60f; // Adjust the field of view based on the current zoom level. Ref. 1
-
+        Camera.main.fieldOfView = PlayerMovementTunnelVision.currentZoom * zoomosity + 60f;
     }
 }

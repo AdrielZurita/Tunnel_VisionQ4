@@ -246,6 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eae5928f0bc57154b824c31f35af0ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  zoomosity: 30
   PlayerMovementTunnelVision: {fileID: 6647636754694676745}
 --- !u!1 &7931056096841624888
 GameObject:
@@ -422,6 +423,7 @@ MonoBehaviour:
   grounded: 0
   CoyoteTime: 0.2
   orientation: {fileID: 6265363417607419098}
+  rb: {fileID: 0}
   zoomMaxMultiplier: 1.333
   zoomMinMultiplier: 0.333
   zoomSensitivity: 0.05
