@@ -124,9 +124,9 @@ public class PlayerMovementTunnelVision : MonoBehaviour
 
         if (horizontalInput != 0 || verticalInput != 0) // if pressing WASD
         {    
-            if (currentSpeed < 4f)
+            if (currentSpeed < 1f)
             {
-                currentSpeed = 4f; // eases acceleration from 0 to prevent slow start when beginning to move.
+                currentSpeed = 1f; // eases acceleration from 0 to prevent slow start when beginning to move.
             }
 
             if (Input.GetKey(KeyCode.LeftShift))
@@ -205,7 +205,7 @@ public class PlayerMovementTunnelVision : MonoBehaviour
         if (horizontalInput != 0 || verticalInput != 0) // if pressing WASD
         {  
             // Convert input into movement direction relative to orientation.
-            moveDirection = verticalInput * orientation.forward + horizontalInput * orientation.right;
+            moveDirection = verticalInput * orientation.forward + horizontalInput * orientation.right * 0.5f;
         }
 
         if (grounded)
