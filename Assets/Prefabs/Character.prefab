@@ -407,7 +407,7 @@ MonoBehaviour:
   jumpCoolDown: 0.5
   currentSpeed: 0
   speedCap: 2
-  walkAccelerationRate: 0.4
+  walkAccelerationRate: 0.3
   sprintAccelerationRate: 0.2
   sprintSpeedMultiplier: 1.667
   jumpGravity: -1

@@ -609,6 +609,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 4528417161928810585, guid: 92a5e91e533f5b340a497dee3de1acd0, type: 3}
+      propertyPath: PlayerMovementTunnelVision
+      value: 
+      objectReference: {fileID: 1860936481}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3129,6 +3133,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1860936481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6647636754694676745, guid: b2136f36d09a0b845ac657571cc78311, type: 3}
+  m_PrefabInstance: {fileID: 1949002776}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1196021f2dc0a974a98bb7a35b3d45e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1949002776
 PrefabInstance:
   m_ObjectHideFlags: 0
