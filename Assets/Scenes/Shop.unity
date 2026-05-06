@@ -1023,6 +1023,8 @@ GameObject:
   - component: {fileID: 2063447023}
   - component: {fileID: 2063447022}
   - component: {fileID: 2063447021}
+  - component: {fileID: 2063447024}
+  - component: {fileID: 2063447025}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1092,7 +1094,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2063447022}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2063447025}
+        m_TargetAssemblyTypeName: ShopRerollLever, Assembly-CSharp
+        m_MethodName: RerollShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2063447022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1131,6 +1145,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063447019}
   m_CullTransparentMesh: 1
+--- !u!95 &2063447024
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063447019}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a7378acd0f0dbdd408f4b4df582bf752, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2063447025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063447019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f769eea38ef62b498024e5165636646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRerollCost: 4
 --- !u!1 &2132772409
 GameObject:
   m_ObjectHideFlags: 0
