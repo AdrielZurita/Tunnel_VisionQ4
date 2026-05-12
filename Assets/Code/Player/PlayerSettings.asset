@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivityY: 500
   mouseSensitivityX: 500
+  currentLives: 3
+  maxLives: 3
+  devmode: 1

@@ -6,13 +6,16 @@ public class ShopRerollLever : MonoBehaviour
 {
     public int baseRerollCost = 4;
     private int rerollCost;
-    private Animator animator;
+    private Animator leverAnimator;
+    private Animator slotAnimator;
+    public CoinTrackerScript playerRerollCoins;
+
 
     // Start is called before the first frame update
     void Start()
     {
         rerollCost = baseRerollCost;
-        animator = GetComponent<Animator>();
+        leverAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -23,10 +26,18 @@ public class ShopRerollLever : MonoBehaviour
 
     public void RerollShop()
     {   
-        //if (ShopManager.Instance.coins < rerollCost) return;
-        //ShopManager.Instance.RerollShop();
-        //coins -= rerollCost;
-        animator.SetTrigger("Pulled");
+        if (playerRerollCoins.playerCountCount >= rerollCost)
+        {
+            playerRerollCoins.playerCountCount -= rerollCost;
+            rerollCost++;
+            leverAnimator.SetTrigger("Pulled");
+            slotAnimator.SetTrigger("Reroll");
+        }
+        else
+        {
+            Debug.Log("Not enough shards to reroll the shop!");
+            leverAnimator.SetTrigger("Poor");
+        }
         
     }
 

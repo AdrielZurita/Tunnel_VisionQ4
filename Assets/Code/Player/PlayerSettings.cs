@@ -9,4 +9,5 @@ public class PlayerSettings : ScriptableObject
     public float mouseSensitivityX = 1000f;
     public float currentLives = 3f;
     public float maxLives = 3f;
+    public bool devmode = false;
 }
