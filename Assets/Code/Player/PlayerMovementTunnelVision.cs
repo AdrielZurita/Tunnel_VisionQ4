@@ -45,7 +45,7 @@ public class PlayerMovementTunnelVision : MonoBehaviour
     public float currentZoom = 1f;                    // current zoom level
 
     [Header("DevMode")]
-    public bool DevMode = false;                       // Toggle debugging shortcuts.
+     public PlayerSettings devModeSource;                     // Toggle debugging shortcuts.
 
     void Start()
     {
@@ -101,7 +101,7 @@ public class PlayerMovementTunnelVision : MonoBehaviour
 
     private void MyInput()
     {
-        if (DevMode)
+        if (devModeSource.devmode)
         {
             if (Input.GetKey(KeyCode.F1))
             {
