@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 119d41f9b24fa35429d889d5bd73bc46
+guid: ed88ba38d28713c4ba58078211abe32d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tunnel Vision Main Menu Quit_0
+      name: Tunnel Vision Main Menu Options_0
       rect:
         serializedVersion: 2
         x: 40
-        y: 610
+        y: 902
         width: 556
-        height: 242
+        height: 241
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,8 +111,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dc744fe7b568a2f4eb60c259b26f8641
-      internalID: -1026476785
+      spriteID: 82e2ecfbc745e0c4aa669626d5763bc8
+      internalID: 1176137387
       vertices: []
       indices: 
       edges: []
@@ -120,7 +120,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 7c931569608f6af4fb57c11660752623
+    spriteID: 25af1a04845739d468b564352ff025f8
     internalID: 0
     vertices: []
     indices: 
@@ -128,7 +128,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Tunnel Vision Main Menu Quit_0: -1026476785
+      Tunnel Vision Main Menu Options_0: 1176137387
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
