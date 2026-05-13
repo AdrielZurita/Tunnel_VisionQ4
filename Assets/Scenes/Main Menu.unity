@@ -247,7 +247,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -781, y: 286}
+  m_AnchoredPosition: {x: -780, y: 290}
   m_SizeDelta: {x: 270, y: 118}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &741488014
@@ -262,7 +262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a15ec078f369d469b985bd7c44f8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: MainGame
+  PlayerSettings: {fileID: 0}
+  CoinTrackerScript: {fileID: 0}
+  level: Settings
 --- !u!114 &741488015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,7 +470,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -781, y: 104}
+  m_AnchoredPosition: {x: -780, y: 140}
   m_SizeDelta: {x: 270, y: 118}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &885488008
@@ -483,7 +485,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a15ec078f369d469b985bd7c44f8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: MainGame
+  PlayerSettings: {fileID: 0}
+  CoinTrackerScript: {fileID: 0}
+  level: MainMenu
 --- !u!114 &885488009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -530,7 +534,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 885488008}
         m_TargetAssemblyTypeName: MenuButton, Assembly-CSharp
-        m_MethodName: EnterLevel
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -880,7 +884,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -781, y: 446}
+  m_AnchoredPosition: {x: -780, y: 440}
   m_SizeDelta: {x: 270, y: 118}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2063784942
@@ -895,6 +899,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a15ec078f369d469b985bd7c44f8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerSettings: {fileID: 11400000, guid: 12a7c88a73931ff4ebcc37c292bbc5da, type: 2}
+  CoinTrackerScript: {fileID: 11400000, guid: 86fae9a9eb42e7b49b12f34419e5ea40, type: 2}
   level: MainGame
 --- !u!114 &2063784943
 MonoBehaviour:
@@ -943,6 +949,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2063784942}
         m_TargetAssemblyTypeName: MenuButton, Assembly-CSharp
         m_MethodName: EnterLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2063784942}
+        m_TargetAssemblyTypeName: MenuButton, Assembly-CSharp
+        m_MethodName: ResetPlayerSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
