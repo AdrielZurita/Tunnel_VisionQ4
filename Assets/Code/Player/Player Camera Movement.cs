@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerCameramovement : MonoBehaviour
 {
     public PlayerSettings sensetivityInfo;
-
     public Transform orientation;
     public Transform cameraPosition;
 

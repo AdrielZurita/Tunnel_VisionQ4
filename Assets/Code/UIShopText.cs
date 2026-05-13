@@ -14,6 +14,10 @@ public class UIShopText : MonoBehaviour
 
     public PlayerSettings devModeCash;
  
+    void Start()
+    {
+        
+    }
 
     void Update()
     {
