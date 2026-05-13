@@ -11,4 +11,9 @@ public class CoinTrackerScript : ScriptableObject
     {
         playerCountCount += coinValue;
     }
+
+    public void SetCoinCount(int coinValue)
+    {
+        playerCountCount = coinValue;
+    }
 }

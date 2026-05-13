@@ -10,4 +10,5 @@ public class PlayerSettings : ScriptableObject
     public float currentLives = 3f;
     public float maxLives = 3f;
     public bool devmode = false;
+    public int levelPartCount = 10;
 }
