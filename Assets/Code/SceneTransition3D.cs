@@ -25,6 +25,8 @@ public class SceneTransition3D : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {   
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             if (isDeadly)
             {
                 livesInfo.currentLives -= 1;
